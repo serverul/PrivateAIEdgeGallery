@@ -58,8 +58,10 @@ private const val TOP_P = 0.95f
  */
 class LocalInferenceServer(
   private val context: Context,
-  private val port: Int = DEFAULT_PORT,
-) : NanoHTTPD(port) {
+  val serverPort: Int = DEFAULT_PORT,  // must be val for LocalServerManager access
+) : NanoHTTPD(serverPort) {
+
+  internal val actualPort get() = getListeningPort().takeIf { it > 0 } ?: serverPort
 
   private val gson = com.google.gson.Gson()
 
@@ -67,9 +69,9 @@ class LocalInferenceServer(
   private var engine: Engine? = null
   private var conversation: Conversation? = null
 
-  @Volatile var isRunning = false private set
-  @Volatile var isModelLoaded = false private set
-  var loadedModelPath: String? = null private set
+  var isRunning: Boolean = false
+  var isModelLoaded: Boolean = false
+  var loadedModelPath: String? = null
 
   // ── Server lifecycle ─────────────────────────────────────────
 
@@ -77,9 +79,9 @@ class LocalInferenceServer(
     try {
       start(SOCKET_READ_TIMEOUT, SOCKET_READ_TIMEOUT)
       isRunning = true
-      Log.i(TAG, "Server started on port $port")
+      Log.i(TAG, "Server started on port $serverPort")
     } catch (e: Exception) {
-      Log.e(TAG, "Failed to start server on port $port", e)
+      Log.e(TAG, "Failed to start server on port $serverPort", e)
       isRunning = false
     }
   }
@@ -123,7 +125,7 @@ class LocalInferenceServer(
 
       loadedModelPath = modelPath
       isModelLoaded = true
-      Log.i(TAG, "Model loaded: ${modelPath.substringAfterLast("/")} at $port")
+      Log.i(TAG, "Model loaded: ${modelPath.substringAfterLast("/")} at $serverPort")
       Result.success(Unit)
     } catch (e: Exception) {
       Log.e(TAG, "Failed to load model: $modelPath", e)

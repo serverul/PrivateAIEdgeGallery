@@ -18,15 +18,23 @@ package com.hartagis.edgear.server
 
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.ViewModel
 import com.hartagis.edgear.data.DataStoreRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 private const val TAG = "LocalServerManager"
+
+/** Status of the local inference server */
+sealed class ServerStatus {
+  object Stopped : ServerStatus()
+  data class Running(val port: Int, val model: String) : ServerStatus()
+  data class Error(val message: String) : ServerStatus()
+}
 
 /** Settings for the local inference server */
 data class ServerSettings(
@@ -35,12 +43,13 @@ data class ServerSettings(
   val modelPath: String = "",
 )
 
-@Singleton
+@HiltViewModel
 class LocalServerManager @Inject constructor(
   @ApplicationContext private val context: Context,
   private val dataStoreRepository: DataStoreRepository,
-) {
+) : ViewModel() {
   private var server: LocalInferenceServer? = null
+  private var initialized = false
 
   private val _status = MutableStateFlow<ServerStatus>(ServerStatus.Stopped)
   val status: StateFlow<ServerStatus> = _status.asStateFlow()
@@ -51,6 +60,8 @@ class LocalServerManager @Inject constructor(
 
   /** Initialize with saved settings */
   fun init() {
+    if (initialized) return
+    initialized = true
     _settings = ServerSettings(
       enabled = dataStoreRepository.getLocalServerEnabled(),
       port = dataStoreRepository.getLocalServerPort(),
@@ -73,10 +84,12 @@ class LocalServerManager @Inject constructor(
     if (newSettings.enabled) {
       if (server?.isRunning != true) {
         startServer()
-      } else if (server?.port != newSettings.port) {
-        // Port changed - restart
-        stopServer()
-        startServer()
+      } else {
+        val currentPort = server?.serverPort ?: 0
+        if (currentPort != newSettings.port) {
+          stopServer()
+          startServer()
+        }
       }
     } else {
       stopServer()
@@ -112,14 +125,8 @@ class LocalServerManager @Inject constructor(
     Log.i(TAG, "Server stopped")
   }
 
-  fun destroy() {
+  override fun onCleared() {
+    super.onCleared()
     stopServer()
   }
-}
-
-/** Status of the local inference server */
-sealed class ServerStatus {
-  object Stopped : ServerStatus()
-  data class Running(val port: Int, val model: String) : ServerStatus()
-  data class Error(val message: String) : ServerStatus()
 }
