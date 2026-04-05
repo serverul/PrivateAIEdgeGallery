@@ -103,6 +103,8 @@ dependencies {
   implementation(libs.hilt.navigation.compose)
   implementation(libs.androidx.exifinterface)
   implementation(libs.moshi.kotlin)
+  implementation(libs.androidx.documentfile)
+  implementation(libs.guava)
   kapt(libs.hilt.android.compiler)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
