@@ -80,6 +80,7 @@ import com.hartagis.edgear.ui.benchmark.BenchmarkScreen
 import com.hartagis.edgear.ui.common.ErrorDialog
 import com.hartagis.edgear.ui.common.ModelPageAppBar
 import com.hartagis.edgear.ui.common.chat.ModelDownloadStatusInfoPanel
+import com.hartagis.edgear.server.LocalServerManager
 import com.hartagis.edgear.ui.home.HomeScreen
 import com.hartagis.edgear.ui.home.PromoScreenGm4
 import com.hartagis.edgear.ui.modelmanager.GlobalModelManager
@@ -149,6 +150,7 @@ fun GalleryNavHost(
   navController: NavHostController,
   modifier: Modifier = Modifier,
   modelManagerViewModel: ModelManagerViewModel,
+  serverManager: LocalServerManager,
 ) {
   val lifecycleOwner = LocalLifecycleOwner.current
   var showModelManager by remember { mutableStateOf(false) }
@@ -196,6 +198,7 @@ fun GalleryNavHost(
         val homeScreenContent: @Composable () -> Unit = {
           HomeScreen(
             modelManagerViewModel = modelManagerViewModel,
+            serverManager = serverManager,
             tosViewModel = hiltViewModel(),
             enableAnimation = enableHomeScreenAnimation,
             navigateToTaskScreen = { task ->

@@ -96,10 +96,10 @@ private val THEME_OPTIONS = listOf(Theme.THEME_AUTO, Theme.THEME_LIGHT, Theme.TH
 fun SettingsDialog(
   curThemeOverride: Theme,
   modelManagerViewModel: ModelManagerViewModel,
+  serverManager: LocalServerManager,
   onDismissed: () -> Unit,
 ) {
-  val localServerManager = hiltViewModel<com.hartagis.edgear.server.LocalServerManager>()
-  val serverStatus by localServerManager.status.collectAsState()
+  val serverStatus by serverManager.status.collectAsState()
   var serverEnabled by remember { mutableStateOf(localServerManager.settings.enabled) }
   var serverPort by remember { mutableIntStateOf(if (localServerManager.settings.port == 0) 8080 else localServerManager.settings.port) }
   var serverModelPath by remember { mutableStateOf(localServerManager.settings.modelPath) }
@@ -345,7 +345,7 @@ fun SettingsDialog(
                 checked = serverEnabled,
                 onCheckedChange = { enabled ->
                   serverEnabled = enabled
-                  localServerManager.updateSettings(
+                  serverManager.updateSettings(
                     com.hartagis.edgear.server.ServerSettings(
                       enabled = enabled,
                       port = serverPort,
@@ -362,7 +362,7 @@ fun SettingsDialog(
                 onValueChange = {
                   val newPort = it.toIntOrNull() ?: 8080
                   serverPort = newPort
-                  localServerManager.updateSettings(
+                  serverManager.updateSettings(
                     com.hartagis.edgear.server.ServerSettings(
                       enabled = true,
                       port = newPort,
@@ -388,7 +388,7 @@ fun SettingsDialog(
                 value = serverModelPath,
                 onValueChange = {
                   serverModelPath = it
-                  localServerManager.updateSettings(
+                  serverManager.updateSettings(
                     com.hartagis.edgear.server.ServerSettings(
                       enabled = true,
                       port = serverPort,

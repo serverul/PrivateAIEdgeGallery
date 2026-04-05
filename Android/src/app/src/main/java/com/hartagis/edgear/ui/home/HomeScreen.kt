@@ -163,6 +163,7 @@ fun HomeScreen(
   navigateToTaskScreen: (Task) -> Unit,
   onModelsClicked: () -> Unit,
   enableAnimation: Boolean,
+  serverManager: LocalServerManager,
   modifier: Modifier = Modifier,
   gm4: Boolean = false,
 ) {
@@ -514,6 +515,7 @@ fun HomeScreen(
     SettingsDialog(
       curThemeOverride = modelManagerViewModel.readThemeOverride(),
       modelManagerViewModel = modelManagerViewModel,
+      serverManager = serverManager,
       onDismissed = { showSettingsDialog = false },
     )
   }

@@ -19,6 +19,7 @@ package com.hartagis.edgear
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.hartagis.edgear.server.LocalServerManager
 import com.hartagis.edgear.ui.modelmanager.ModelManagerViewModel
 import com.hartagis.edgear.ui.navigation.GalleryNavHost
 
@@ -27,6 +28,11 @@ import com.hartagis.edgear.ui.navigation.GalleryNavHost
 fun GalleryApp(
   navController: NavHostController = rememberNavController(),
   modelManagerViewModel: ModelManagerViewModel,
+  serverManager: LocalServerManager,
 ) {
-  GalleryNavHost(navController = navController, modelManagerViewModel = modelManagerViewModel)
+  GalleryNavHost(
+    navController = navController,
+    modelManagerViewModel = modelManagerViewModel,
+    serverManager = serverManager,
+  )
 }
