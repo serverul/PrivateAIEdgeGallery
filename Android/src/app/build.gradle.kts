@@ -27,11 +27,11 @@ plugins {
 }
 
 android {
-  namespace = "com.google.ai.edge.gallery"
+  namespace = "com.hartagis.edgear"
   compileSdk = 35
 
   defaultConfig {
-    applicationId = "com.google.aiedge.gallery"
+    applicationId = "com.hartagis.edgear"
     minSdk = 31
     targetSdk = 35
     versionCode = 23
@@ -41,7 +41,7 @@ android {
     // Use the scheme of the "Redirect URLs" in HuggingFace app.
     manifestPlaceholders["appAuthRedirectScheme"] =
         "REPLACE_WITH_YOUR_REDIRECT_SCHEME_IN_HUGGINGFACE_APP"
-    manifestPlaceholders["applicationName"] = "com.google.ai.edge.gallery.GalleryApplication"
+    manifestPlaceholders["applicationName"] = "com.hartagis.edgear.GalleryApplication"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
