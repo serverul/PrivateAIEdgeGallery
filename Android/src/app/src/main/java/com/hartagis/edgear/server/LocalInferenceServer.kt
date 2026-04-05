@@ -77,7 +77,7 @@ class LocalInferenceServer(
 
   fun startServer() {
     try {
-      start(SOCKET_READ_TIMEOUT, SOCKET_READ_TIMEOUT)
+      start(SOCKET_READ_TIMEOUT)
       isRunning = true
       Log.i(TAG, "Server started on port $serverPort")
     } catch (e: Exception) {
