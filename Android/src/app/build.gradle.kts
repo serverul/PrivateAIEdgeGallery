@@ -105,6 +105,7 @@ dependencies {
   implementation(libs.moshi.kotlin)
   implementation(libs.androidx.documentfile)
   implementation(libs.guava)
+  implementation(libs.nanohttpd)
   kapt(libs.hilt.android.compiler)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)

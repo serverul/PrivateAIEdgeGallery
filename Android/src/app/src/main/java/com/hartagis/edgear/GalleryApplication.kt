@@ -18,6 +18,7 @@ package com.hartagis.edgear
 
 import android.app.Application
 import com.hartagis.edgear.data.DataStoreRepository
+import com.hartagis.edgear.server.LocalServerManager
 import com.hartagis.edgear.ui.theme.ThemeSettings
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -27,10 +28,15 @@ class GalleryApplication : Application() {
 
   @Inject lateinit var dataStoreRepository: DataStoreRepository
 
+  @Inject lateinit var localServerManager: LocalServerManager
+
   override fun onCreate() {
     super.onCreate()
 
     // Load saved theme.
     ThemeSettings.themeOverride.value = dataStoreRepository.readTheme()
+
+    // Initialize local inference server.
+    localServerManager.init()
   }
 }

@@ -109,6 +109,15 @@ interface DataStoreRepository {
 
   /** Returns whether a promo with the specified ID has been viewed. */
   fun hasViewedPromo(promoId: String): Boolean
+
+  // Local inference server settings
+  fun getLocalServerEnabled(): Boolean
+  fun saveLocalServerEnabled(enabled: Boolean)
+  fun getLocalServerPort(): Int
+  fun saveLocalServerPort(port: Int)
+  fun getLocalServerModelPath(): String
+  fun saveLocalServerModelPath(modelPath: String)
+  fun saveLocalServerSettings(enabled: Boolean, port: Int, modelPath: String)
 }
 
 /** Repository for managing data using Proto DataStore. */
@@ -431,6 +440,58 @@ class DefaultDataStoreRepository(
     return runBlocking {
       val settings = dataStore.data.first()
       settings.viewedPromoIdList.contains(promoId)
+    }
+  }
+
+  // Local inference server settings
+  override fun getLocalServerEnabled(): Boolean {
+    return runBlocking {
+      val settings = dataStore.data.first()
+      settings.localServerEnabled
+    }
+  }
+
+  override fun saveLocalServerEnabled(enabled: Boolean) {
+    runBlocking {
+      dataStore.updateData { settings -> settings.toBuilder().setLocalServerEnabled(enabled).build() }
+    }
+  }
+
+  override fun getLocalServerPort(): Int {
+    return runBlocking {
+      val settings = dataStore.data.first()
+      if (settings.localServerPort == 0) 8080 else settings.localServerPort
+    }
+  }
+
+  override fun saveLocalServerPort(port: Int) {
+    runBlocking {
+      dataStore.updateData { settings -> settings.toBuilder().setLocalServerPort(port).build() }
+    }
+  }
+
+  override fun getLocalServerModelPath(): String {
+    return runBlocking {
+      val settings = dataStore.data.first()
+      settings.localServerModelPath
+    }
+  }
+
+  override fun saveLocalServerModelPath(modelPath: String) {
+    runBlocking {
+      dataStore.updateData { settings -> settings.toBuilder().setLocalServerModelPath(modelPath).build() }
+    }
+  }
+
+  override fun saveLocalServerSettings(enabled: Boolean, port: Int, modelPath: String) {
+    runBlocking {
+      dataStore.updateData { settings ->
+        settings.toBuilder()
+          .setLocalServerEnabled(enabled)
+          .setLocalServerPort(port)
+          .setLocalServerModelPath(modelPath)
+          .build()
+      }
     }
   }
 }

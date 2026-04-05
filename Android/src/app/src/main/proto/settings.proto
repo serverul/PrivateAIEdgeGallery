@@ -78,6 +78,11 @@ message Settings {
   // copybara:strip_end
 
   repeated string viewed_promo_id = 10;
+
+  // Local inference server settings
+  bool local_server_enabled = 11;
+  int32 local_server_port = 12;
+  string local_server_model_path = 13;
 }
 
 message UserData {

@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -46,11 +47,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -69,6 +74,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hartagis.edgear.BuildConfig
 import com.hartagis.edgear.R
 import com.hartagis.edgear.proto.Theme
@@ -92,6 +98,11 @@ fun SettingsDialog(
   modelManagerViewModel: ModelManagerViewModel,
   onDismissed: () -> Unit,
 ) {
+  val localServerManager = hiltViewModel<com.hartagis.edgear.server.LocalServerManager>()
+  val serverStatus by localServerManager.status.collectAsState()
+  var serverEnabled by remember { mutableStateOf(localServerManager.settings.enabled) }
+  var serverPort by remember { mutableIntStateOf(if (localServerManager.settings.port == 0) 8080 else localServerManager.settings.port) }
+  var serverModelPath by remember { mutableStateOf(localServerManager.settings.modelPath) }
   var selectedTheme by remember { mutableStateOf(curThemeOverride) }
   var hfToken by remember { mutableStateOf(modelManagerViewModel.getTokenStatusAndData().data) }
   val dateFormatter = remember {
@@ -290,6 +301,115 @@ fun SettingsDialog(
           }
 
           // Third party licenses removed - privacy focused
+
+          // Local Inference Server
+          Column(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
+            Text(
+              "Local Inference Server",
+              style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium),
+            )
+            Row(
+              modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+              horizontalArrangement = Arrangement.SpaceBetween,
+              verticalAlignment = Alignment.CenterVertically,
+            ) {
+              Column(modifier = Modifier.weight(1f)) {
+                Text(
+                  "OpenAI-compatible API server",
+                  style = MaterialTheme.typography.bodyMedium,
+                )
+                val statusText = when (serverStatus) {
+                  is com.hartagis.edgear.server.ServerStatus.Running -> {
+                    val running = serverStatus as com.hartagis.edgear.server.ServerStatus.Running
+                    "Running on port ${running.port}"
+                  }
+                  is com.hartagis.edgear.server.ServerStatus.Stopped -> "Stopped"
+                  is com.hartagis.edgear.server.ServerStatus.Error -> {
+                    val error = serverStatus as com.hartagis.edgear.server.ServerStatus.Error
+                    "Error: ${error.message}"
+                  }
+                }
+                Text(
+                  statusText,
+                  style = MaterialTheme.typography.bodySmall,
+                  color = when (serverStatus) {
+                    is com.hartagis.edgear.server.ServerStatus.Running ->
+                      MaterialTheme.colorScheme.primary
+                    is com.hartagis.edgear.server.ServerStatus.Error ->
+                      MaterialTheme.colorScheme.error
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                  },
+                )
+              }
+              Switch(
+                checked = serverEnabled,
+                onCheckedChange = { enabled ->
+                  serverEnabled = enabled
+                  localServerManager.updateSettings(
+                    com.hartagis.edgear.server.ServerSettings(
+                      enabled = enabled,
+                      port = serverPort,
+                      modelPath = serverModelPath,
+                    ),
+                  )
+                },
+              )
+            }
+            if (serverEnabled) {
+              // Port input
+              OutlinedTextField(
+                value = if (serverPort == 0) "" else serverPort.toString(),
+                onValueChange = {
+                  val newPort = it.toIntOrNull() ?: 8080
+                  serverPort = newPort
+                  localServerManager.updateSettings(
+                    com.hartagis.edgear.server.ServerSettings(
+                      enabled = true,
+                      port = newPort,
+                      modelPath = serverModelPath,
+                    ),
+                  )
+                },
+                label = { Text("Port") },
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                isError = serverPort !in 1024..65535,
+                supportingText = {
+                  if (serverPort !in 1024..65535) {
+                    Text("Port must be between 1024-65535")
+                  }
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+              )
+
+              Spacer(modifier = Modifier.height(8.dp))
+
+              // Model path input
+              OutlinedTextField(
+                value = serverModelPath,
+                onValueChange = {
+                  serverModelPath = it
+                  localServerManager.updateSettings(
+                    com.hartagis.edgear.server.ServerSettings(
+                      enabled = true,
+                      port = serverPort,
+                      modelPath = it,
+                    ),
+                  )
+                },
+                label = { Text("Model path") },
+                placeholder = { Text("/path/to/model.litertlm") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+              )
+              Text(
+                "Path to .litertlm model file (leave empty for default)",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp),
+              )
+            }
+          }
 
           // Tos
           Column(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
