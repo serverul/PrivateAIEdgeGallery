@@ -1,6 +1,7 @@
 # Private Edge Gallery 🔒
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/serverul/PrivateAIEdgeGallery?label=latest&color=success)](https://github.com/serverul/PrivateAIEdgeGallery/releases/tag/v1.0.0)
 
 **On-Device AI — Privacy First. No Tracking, No Telemetry, Fully Offline.**
 
@@ -18,7 +19,7 @@ Private Edge Gallery is a privacy-focused fork of Google's [AI Edge Gallery](htt
 | Google Services / OSS Licenses | ✅ Included | ❌ Removed |
 | Telemetry & Tracking | ✅ Present | ❌ Fully stripped |
 | Internet required | Often | Never |
-| Package name | `com.google.ai.edge.gallery` | `com.hartagis.edgear` |
+| Package name | `com.google.ai.edge.gallery` | `app.release.edgear` |
 
 ## ✨ Core Features
 
@@ -40,15 +41,15 @@ Private Edge Gallery is a privacy-focused fork of Google's [AI Edge Gallery](htt
 ## 🏁 Get Started
 
 ### Pre-built APK
-Download the latest APK from [Releases](https://github.com/google-ai-edge/gallery/releases/latest/) or clone and build from source.
+Download the latest APK from [Releases](https://github.com/serverul/PrivateAIEdgeGallery/releases/tag/v1.0.0) or clone and build from source.
 
 ### Build from Source
 
 1. **Requirements:** Android Studio, Gradle 8+, Android SDK (API 31+)
 2. **Clone:**
    ```bash
-   git clone https://github.com/hartagis/private-edge-gallery.git
-   cd private-edge-gallery/Android/src
+   git clone https://github.com/serverul/PrivateAIEdgeGallery.git
+   cd PrivateAIEdgeGallery/Android/src
    ```
 3. **Build:**
    ```bash
@@ -71,7 +72,7 @@ See [DEVELOPMENT.md](Android/src/DEVELOPMENT.md) for full build instructions.
 This project is licensed under the **Apache License, Version 2.0**.
 
 Original work Copyright © 2025 Google LLC.
-Modifications Copyright © 2026 HartaGIS.
+Modifications Copyright © 2026 Private Edge Gallery contributors.
 
 See [LICENSE](LICENSE) for the full license text.
 
