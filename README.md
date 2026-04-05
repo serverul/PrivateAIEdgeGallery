@@ -41,7 +41,7 @@ Private Edge Gallery is a privacy-focused fork of Google's [AI Edge Gallery](htt
 ## 🏁 Get Started
 
 ### Pre-built APK
-Download the latest APK from [Releases](https://github.com/serverul/PrivateAIEdgeGallery/releases/tag/v1.0.0) or clone and build from source.
+Download the latest APK from [Releases](https://github.com/serverul/PrivateAIEdgeGallery/releases/tag/release) or clone and build from source.
 
 ### Build from Source
 
