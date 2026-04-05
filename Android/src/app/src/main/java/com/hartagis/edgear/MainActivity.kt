@@ -48,6 +48,7 @@ import androidx.core.os.bundleOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.hartagis.edgear.ui.modelmanager.ModelManagerViewModel
+import com.hartagis.edgear.server.LocalServerManager
 import com.hartagis.edgear.ui.theme.GalleryTheme
 import com.google.ai.edge.litertlm.ExperimentalApi
 import com.google.ai.edge.litertlm.ExperimentalFlags
@@ -59,6 +60,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
   private val modelManagerViewModel: ModelManagerViewModel by viewModels()
+  @Inject lateinit var serverManager: LocalServerManager
   private var splashScreenAboutToExit: Boolean = false
   private var contentSet: Boolean = false
 
@@ -73,7 +75,10 @@ class MainActivity : ComponentActivity() {
       setContent {
         GalleryTheme {
           Surface(modifier = Modifier.fillMaxSize()) {
-            GalleryApp(modelManagerViewModel = modelManagerViewModel)
+            GalleryApp(
+              modelManagerViewModel = modelManagerViewModel,
+              serverManager = serverManager,
+            )
 
             // Fade out a "mask" that has the same color as the background of the splash screen
             // to reveal the actual app content.

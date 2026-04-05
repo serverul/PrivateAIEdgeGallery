@@ -17,7 +17,9 @@
 package com.hartagis.edgear
 
 import android.app.Application
+import android.content.Intent
 import com.hartagis.edgear.data.DataStoreRepository
+import com.hartagis.edgear.server.InferenceServerService
 import com.hartagis.edgear.ui.theme.ThemeSettings
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -32,5 +34,13 @@ class GalleryApplication : Application() {
 
     // Load saved theme.
     ThemeSettings.themeOverride.value = dataStoreRepository.readTheme()
+
+    // Start inference server in foreground service if enabled.
+    if (dataStoreRepository.getLocalServerEnabled()) {
+      val intent = Intent(this, InferenceServerService::class.java).apply {
+        action = InferenceServerService.ACTION_START
+      }
+      startForegroundService(intent)
+    }
   }
 }
