@@ -49,6 +49,7 @@ import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
+import com.hartagis.edgear.server.LocalServerManager
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -100,9 +101,9 @@ fun SettingsDialog(
   onDismissed: () -> Unit,
 ) {
   val serverStatus by serverManager.status.collectAsState()
-  var serverEnabled by remember { mutableStateOf(localServerManager.settings.enabled) }
-  var serverPort by remember { mutableIntStateOf(if (localServerManager.settings.port == 0) 8080 else localServerManager.settings.port) }
-  var serverModelPath by remember { mutableStateOf(localServerManager.settings.modelPath) }
+  var serverEnabled by remember { mutableStateOf(serverManager.settings.enabled) }
+  var serverPort by remember { mutableIntStateOf(if (serverManager.settings.port == 0) 8080 else serverManager.settings.port) }
+  var serverModelPath by remember { mutableStateOf(serverManager.settings.modelPath) }
   var selectedTheme by remember { mutableStateOf(curThemeOverride) }
   var hfToken by remember { mutableStateOf(modelManagerViewModel.getTokenStatusAndData().data) }
   val dateFormatter = remember {
@@ -325,6 +326,7 @@ fun SettingsDialog(
                   }
                   is com.hartagis.edgear.server.ServerStatus.Stopped -> "Stopped"
                   is com.hartagis.edgear.server.ServerStatus.Error -> {
+                  else -> "Unknown"
                     val error = serverStatus as com.hartagis.edgear.server.ServerStatus.Error
                     "Error: ${error.message}"
                   }
