@@ -326,10 +326,10 @@ fun SettingsDialog(
                   }
                   is com.hartagis.edgear.server.ServerStatus.Stopped -> "Stopped"
                   is com.hartagis.edgear.server.ServerStatus.Error -> {
-                  else -> "Unknown"
                     val error = serverStatus as com.hartagis.edgear.server.ServerStatus.Error
                     "Error: ${error.message}"
                   }
+                  else -> "Unknown"
                 }
                 Text(
                   statusText,
