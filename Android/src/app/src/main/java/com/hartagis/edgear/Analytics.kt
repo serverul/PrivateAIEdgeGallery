@@ -16,12 +16,16 @@
 
 package com.hartagis.edgear
 
+import android.os.Bundle
+
 // No-op analytics stub — privacy focused.
-// Returns null so firebaseAnalytics?.logEvent(...) silently does nothing.
 // No data is sent to Google or any third party.
 
-val firebaseAnalytics: Nothing?
-  get() = null
+class NoOpAnalytics {
+  fun logEvent(eventName: String, bundle: Bundle?) {}
+}
+
+val firebaseAnalytics = NoOpAnalytics()
 
 enum class GalleryEvent(val id: String) {
   CAPABILITY_SELECT(id = "capability_select"),
